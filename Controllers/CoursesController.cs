@@ -197,6 +197,7 @@ namespace Project.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
             IQueryable<Course> coursesQuery = _context.Course.Where(m => m.FirstTeacherId == id || m.SecondTeacherId == id);
             await _context.SaveChangesAsync();
+            ViewBag.Message = teacher.FullName;
             if (teacher == null)
             {
                 return NotFound();
