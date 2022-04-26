@@ -5,9 +5,9 @@ namespace Project.Models
     public class Enrollment
     {
         public long Id { get; set; }
-        public int? CourseId { get; set; }
+        public int CourseId { get; set; }
         public Course? Course { get; set; }
-        public long? StudentId { get; set; }
+        public long StudentId { get; set; }
         public Student? Student { get; set; }
         [StringLength(10)]
         public string? Semester { get; set; }
