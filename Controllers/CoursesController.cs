@@ -41,7 +41,7 @@ namespace Project.Controllers
             }
             var CoursefilterVM = new CourseQuery
             {
-                Courses = await coursesQuery.Include(c => c.FirstTeacher).Include(c => c.SecondTeacher).ToListAsync(),
+                Courses = await coursesQuery.Include(c => c.FirstTeacher).Include(c => c.SecondTeacher).Include(c => c.Students).ThenInclude(c => c.Student).ToListAsync(),
                 Programmes = new SelectList(await programmesQuery.ToListAsync()),
                 Semesters = new SelectList(await semestersQuery.ToListAsync())
             };
@@ -84,7 +84,7 @@ namespace Project.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,Credits,Semester,Programme,EducationLevel,FirstTeacherId,SecondTeacherId")] Course course)
         {
-           // if (ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 _context.Add(course);
                 await _context.SaveChangesAsync();

@@ -49,14 +49,14 @@ namespace Project.Controllers
             {
                 teachersQuery = teachersQuery.Where(x => x.Degree.Contains(Degree));
             }
-            var TeacherFilterVM = new TeacherQuery
+            var TeacherFilter = new TeacherQuery
             {
                 Teachers = await teachersQuery.ToListAsync(),
                 AcademicRanks = new SelectList(await academicRanksQuery.ToListAsync()),
                 Degrees = new SelectList(await degreesQuery.ToListAsync())
             };
 
-            return View(TeacherFilterVM);
+            return View(TeacherFilter);
         }
 
         // GET: Teachers/Details/5

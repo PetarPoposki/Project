@@ -42,12 +42,12 @@ namespace Project.Controllers
             {
                 studentsQuery = studentsQuery.Where(x => x.StudentId.Contains(StudentId));
             }
-            var StudentFilterVM = new StudentQuery
+            var StudentFilter = new StudentQuery
             {
                 Students = await studentsQuery.ToListAsync()
             };
 
-            return View(StudentFilterVM);
+            return View(StudentFilter);
         }
 
         // GET: Students/Details/5
@@ -175,7 +175,7 @@ namespace Project.Controllers
             return _context.Student.Any(e => e.Id == id);
         }
         // GET: Students/StudentsFilter/5
-        public async Task<IActionResult> StudentsEnrolled(int? id)
+        public async Task<IActionResult> StudentsFind(int? id)
         {
             if (id == null)
             {
@@ -184,18 +184,41 @@ namespace Project.Controllers
 
             var course = await _context.Course
                 .FirstOrDefaultAsync(m => m.Id == id);
-            IQueryable<Student> studentQuery = _context.Enrollment.Where(x => x.Id == id).Select(x => x.Student);
+            IQueryable<Student> studentsQuery = _context.Enrollment.Where(x => x.Id == id).Select(x => x.Student);
             await _context.SaveChangesAsync();
+            
             if (course == null)
             {
                 return NotFound();
             }
-            var studentFilterVM = new StudentQuery
+            var StudentFilter = new StudentQuery
             {
-                Students = await studentQuery.ToListAsync(),
+                Students = await studentsQuery.ToListAsync(),
             };
 
-            return View(studentFilterVM);
+            return View(StudentFilter);
         }
+        /*  public async Task<IActionResult> StudentsEnrolled(int? id)
+          {
+              if (id == null)
+              {
+                  return NotFound();
+              }
+
+              var course = await _context.Course
+                  .FirstOrDefaultAsync(m => m.Id == id);
+              IQueryable<Student> studentQuery = _context.Enrollment.Where(x => x.Id == id).Select(x => x.Student);
+              await _context.SaveChangesAsync();
+              if (course == null)
+              {
+                  return NotFound();
+              }
+              var studentFilterVM = new StudentQuery
+              {
+                  Students = await studentQuery.ToListAsync(),
+              };
+
+              return View(studentFilterVM);
+         }*/
     }
 }
