@@ -202,12 +202,12 @@ namespace Project.Controllers
             {
                 return NotFound();
             }
-            var CourseTitleVM = new CourseQuery
+            var CourseTitle = new CourseQuery
             {
                 Courses = await coursesQuery.ToListAsync(),
             };
 
-            return View(CourseTitleVM);
+            return View(CourseTitle);
         }
     }
 }

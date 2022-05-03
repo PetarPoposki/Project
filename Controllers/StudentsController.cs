@@ -198,27 +198,6 @@ namespace Project.Controllers
 
             return View(StudentFilter);
         }
-        /*  public async Task<IActionResult> StudentsEnrolled(int? id)
-          {
-              if (id == null)
-              {
-                  return NotFound();
-              }
-
-              var course = await _context.Course
-                  .FirstOrDefaultAsync(m => m.Id == id);
-              IQueryable<Student> studentQuery = _context.Enrollment.Where(x => x.Id == id).Select(x => x.Student);
-              await _context.SaveChangesAsync();
-              if (course == null)
-              {
-                  return NotFound();
-              }
-              var studentFilterVM = new StudentQuery
-              {
-                  Students = await studentQuery.ToListAsync(),
-              };
-
-              return View(studentFilterVM);
-         }*/
+        
     }
 }

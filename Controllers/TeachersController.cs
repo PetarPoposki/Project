@@ -174,6 +174,17 @@ namespace Project.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var teacher = await _context.Teacher.FindAsync(id);
+            IQueryable<Course> courses = _context.Course.AsQueryable();
+            IQueryable<Course> courses1 = courses.Where(x => x.FirstTeacherId == teacher.Id);
+            IQueryable<Course> courses2 = courses.Where(x => x.SecondTeacherId == teacher.Id);
+            foreach (var course in courses1)
+            {
+                course.FirstTeacherId = null;
+            }
+            foreach (var course in courses2)
+            {
+                course.SecondTeacherId = null;
+            }
             _context.Teacher.Remove(teacher);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
