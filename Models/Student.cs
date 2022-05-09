@@ -31,6 +31,7 @@ namespace Project.Models
         {
             get { return String.Format("{0} {1}", FirstName, LastName); }
         }
+        public string? ProfilePicture { get; set; }
         public ICollection<Enrollment>? Courses { get; set; }
     }
 }

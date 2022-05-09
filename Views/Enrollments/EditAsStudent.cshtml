@@ -1,0 +1,97 @@
+﻿@model Project.ViewModels.EditAsStudent
+
+@{
+    ViewData["Title"] = "EditAsStudent";
+}
+
+<h1>Edit</h1>
+
+<h4>Enrollment</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="EditAsStudent" asp-route-teacher="@ViewBag.teacher"  enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="enrollment.Id" />
+            <div class="form-group">
+                <label asp-for="enrollment.CourseId" class="control-label"></label>
+                <select asp-for="enrollment.CourseId" class="form-control" asp-items="ViewBag.CourseId" readonly="@(true)"></select>
+                <span asp-validation-for="enrollment.CourseId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="enrollment.StudentId" class="control-label"></label>
+                <select asp-for="enrollment.StudentId" class="form-control" asp-items="ViewBag.StudentId" readonly="@(true)"></select>
+                <span asp-validation-for="enrollment.StudentId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="enrollment.Semester" class="control-label"></label>
+                <input asp-for="enrollment.Semester" class="form-control" readonly="@(true)"/>
+                <span asp-validation-for="enrollment.Semester" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="enrollment.Year" class="control-label"></label>
+                <input asp-for="enrollment.Year" class="form-control" readonly="@(true)"/>
+                <span asp-validation-for="enrollment.Year" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="enrollment.Grade" class="control-label"></label>
+                <input asp-for="enrollment.Grade" class="form-control" readonly="@(true)"/>
+                <span asp-validation-for="enrollment.Grade" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="display:none">
+                <label asp-for="enrollment.SeminalUrl" class="control-label"></label>
+                <input asp-for="SeminalUrlName" class="form-control" readonly="@(true)">
+                <span asp-validation-for="enrollment.SeminalUrl" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SeminalUrlFile" class="control-label"></label>
+                <div class="custom-file">
+                    <input asp-for="SeminalUrlFile" class="custom-file-input" id="customFile">
+                    <label class="custom-file-label" for="customFile"></label>
+                </div>
+                <span asp-validation-for="SeminalUrlFile" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="enrollment.ProjectUrl" class="control-label"></label>
+                <input asp-for="enrollment.ProjectUrl" class="form-control"/>
+                <span asp-validation-for="enrollment.ProjectUrl" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="enrollment.ExamPoints" class="control-label"></label>
+                <input asp-for="enrollment.ExamPoints" class="form-control" readonly="@(true)/>
+                <span asp-validation-for="ExamPoints" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="enrollment.SeminalPoints" class="control-label"></label>
+                <input asp-for="enrollment.SeminalPoints" class="form-control" readonly="@(true)/>
+                <span asp-validation-for="SeminalPoints" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="enrollment.ProjectPoints" class="control-label"></label>
+                <input asp-for="enrollment.ProjectPoints" class="form-control" readonly="@(true)/>
+                <span asp-validation-for="ProjectPoints" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="enrollment.AdditionalPoints" class="control-label"></label>
+                <input asp-for="enrollment.AdditionalPoints" class="form-control" readonly="@(true)/>
+                <span asp-validation-for="AdditionalPoints" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="enrollment.FinishDate" class="control-label"></label>
+                <input asp-for="enrollment.FinishDate" class="form-control" readonly="@(true)/>
+                <span asp-validation-for="FinishDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

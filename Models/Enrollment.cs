@@ -24,6 +24,5 @@ namespace Project.Models
         [Display(Name = "Finish Date")]
         [DataType(DataType.Date)]
         public DateTime? FinishDate { get; set; }
-
     }
 }

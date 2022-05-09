@@ -74,7 +74,13 @@ namespace Project.Controllers
                 return NotFound();
             }
 
-            return View(teacher);
+            TeacherPicture viewmodel = new TeacherPicture
+            {
+                teacher = teacher,
+                ProfilePictureName = teacher.ProfilePicture
+            };
+
+            return View(viewmodel);
         }
 
         // GET: Teachers/Create
@@ -193,6 +199,93 @@ namespace Project.Controllers
         private bool TeacherExists(int id)
         {
             return _context.Teacher.Any(e => e.Id == id);
+        }
+        // GET: Teachers/EditPicture/5
+        public async Task<IActionResult> EditPicture(long? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var teacher = _context.Teacher.Where(x => x.Id == id).First();
+            if (teacher == null)
+            {
+                return NotFound();
+            }
+
+            TeacherPicture viewmodel = new TeacherPicture
+            {
+                teacher = teacher,
+                ProfilePictureName = teacher.ProfilePicture
+            };
+
+            return View(viewmodel);
+        }
+        // POST: Teachers/EditPicture/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditPicture(long id, TeacherPicture viewmodel)
+        {
+            if (id != viewmodel.teacher.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    if (viewmodel.ProfilePictureFile != null)
+                    {
+                        string uniqueFileName = UploadedFile(viewmodel);
+                        viewmodel.teacher.ProfilePicture = uniqueFileName;
+                    }
+                    else
+                    {
+                        viewmodel.teacher.ProfilePicture = viewmodel.ProfilePictureName;
+                    }
+
+                    _context.Update(viewmodel.teacher);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!TeacherExists(viewmodel.teacher.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction("Details", new { id = viewmodel.teacher.Id });
+            }
+            return View(viewmodel);
+        }
+        private string UploadedFile(TeacherPicture viewmodel)
+        {
+            string uniqueFileName = null;
+
+            if (viewmodel.ProfilePictureFile != null)
+            {
+                string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/profilePictures");
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+                uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(viewmodel.ProfilePictureFile.FileName);
+                string fileNameWithPath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
+                {
+                    viewmodel.ProfilePictureFile.CopyTo(stream);
+                }
+            }
+            return uniqueFileName;
         }
     }
 }

@@ -6,6 +6,20 @@
 
 <h1>Details of courses teaching by @ViewBag.Message</h1>
 
+<form asp-controller="Courses" asp-action="CoursesFind" method="get">
+    <p>
+        Title: <input type="text" asp-for="Title" />
+        Programme:
+        <select asp-for="Programme" asp-items="Model.Programmes">
+            <option value="">All</option>
+        </select>
+        Semester:
+        <select asp-for="Semester" asp-items="Model.Semesters">
+            <option value="">All</option>
+        </select>
+        <input type="submit" value="Filter" />
+    </p>
+</form>
 
 <table class="table">
     <thead>
@@ -30,6 +44,9 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Courses[0].SecondTeacherId)
+            </th>
+             <th>
+                Students Enrolled
             </th>
             <th></th>
         </tr>
@@ -58,6 +75,11 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.SecondTeacherId)
+                </td>
+                <td>
+                    <a asp-controller="Enrollments" asp-action="StudentsEnrolledAtCourse" asp-route-id="@item.Id" asp-route-teacher="@ViewBag.Message">
+                        Check Students Enrolled
+                     </a>
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

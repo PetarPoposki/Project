@@ -23,6 +23,7 @@ namespace Project.Models
         [Display(Name = "Hire Date")]
         [DataType(DataType.Date)]
         public DateTime? HireDate { get; set; }
+        public string? ProfilePicture { get; set; }
         public string FullName
         {
             get { return String.Format("{0} {1}", FirstName, LastName); }
