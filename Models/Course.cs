@@ -15,9 +15,9 @@ namespace Project.Models
         [StringLength(25)]
         public string? EducationLevel { get; set; }
         public int? FirstTeacherId { get; set; }
-        public Teacher FirstTeacher { get; set; }
+        public Teacher? FirstTeacher { get; set; }
         public int? SecondTeacherId { get; set; }
-        public Teacher SecondTeacher { get; set; }
+        public Teacher? SecondTeacher { get; set; }
         public ICollection<Enrollment>? Students { get; set; }
     }
 }
