@@ -15,7 +15,10 @@ namespace Project.Controllers
         }
         public IActionResult Index()
         {
+            if (HttpContext.Session.GetString("UserLoggedIn") != "Admin")
+            { 
             ViewBag.userLoggedInId = Convert.ToInt32(HttpContext.Session.GetString("UserLoggedIn"));
+            }
             return View();
         }
 
