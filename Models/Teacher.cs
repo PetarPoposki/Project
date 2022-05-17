@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Project.Areas.Identity.Data;
+using System.ComponentModel.DataAnnotations;
 
 namespace Project.Models
 {
@@ -8,12 +9,12 @@ namespace Project.Models
         [Required]
         [StringLength(50)]
         [Display(Name = "First Name")]
-        public string FirstName { get; set; }
+        public string? FirstName { get; set; }
 
         [Required]
         [StringLength(50)]
         [Display(Name = "Last Name")]
-        public string LastName { get; set; }
+        public string? LastName { get; set; }
         [StringLength(50)]
         public string? Degree { get; set; }
         [StringLength(25)]
@@ -24,9 +25,13 @@ namespace Project.Models
         [DataType(DataType.Date)]
         public DateTime? HireDate { get; set; }
         public string? ProfilePicture { get; set; }
-        public string FullName
+        public string? FullName
         {
             get { return String.Format("{0} {1}", FirstName, LastName); }
         }
+
+        public string? ProjectUserId { get; set; }
+        public ProjectUser? ProjectUser { get; set; }
+
     }
 }

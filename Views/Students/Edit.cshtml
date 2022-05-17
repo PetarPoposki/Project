@@ -13,9 +13,9 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="student.Id" />
             <div class="form-group">
-                <label asp-for="student.Id" class="control-label"></label>
-                <input asp-for="student.Id" class="form-control" />
-                <span asp-validation-for="student.Id" class="text-danger"></span>
+                <label asp-for="student.StudentId" class="control-label"></label>
+                <input asp-for="student.StudentId" class="form-control" />
+                <span asp-validation-for="student.StudentId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="student.FirstName" class="control-label"></label>
@@ -67,6 +67,11 @@
                 <label asp-for="student.ProfilePicture" class="control-label"></label>
                 <input asp-for="student.ProfilePicture" class="form-control" readonly="@(true)">
                 <span asp-validation-for="student.ProfilePicture" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="display:none">
+                <label asp-for="student.ProjectUserId" class="control-label"></label>
+                <input asp-for="student.ProjectUserId" class="form-control" readonly="@(true)">
+                <span asp-validation-for="student.ProjectUserId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

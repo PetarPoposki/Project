@@ -102,9 +102,11 @@
                 @Html.DisplayFor(modelItem => item.FinishDate)
             </td>
             <td>
-                <a asp-action="EditAsStudent" asp-route-id="@item.Id">Edit</a> |
+                @if (User.Identity.IsAuthenticated && User.IsInRole("Student"))
+                {<a asp-action="EditAsStudent" asp-route-id="@item.Id">Edit</a>} |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                {<a asp-action="Delete" asp-route-id="@item.Id">Delete</a>}
             </td>
         </tr>
 }

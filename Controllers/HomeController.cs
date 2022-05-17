@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Project.Models;
 using System.Diagnostics;
 
@@ -12,9 +13,9 @@ namespace Project.Controllers
         {
             _logger = logger;
         }
-
         public IActionResult Index()
         {
+            ViewBag.userLoggedInId = Convert.ToInt32(HttpContext.Session.GetString("UserLoggedIn"));
             return View();
         }
 

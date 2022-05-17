@@ -3,12 +3,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Project.Areas.Identity.Data;
 using Project.Data;
 using Project.Models;
 using Project.ViewModels;
+using System.Web;
 using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IWebHostEnvironment;
 
 namespace Project.Controllers
@@ -16,19 +20,20 @@ namespace Project.Controllers
     public class EnrollmentsController : Controller
     {
         private readonly ProjectContext _context;
-
-        public EnrollmentsController(ProjectContext context)
+        private UserManager<ProjectUser> _userManager;
+        public EnrollmentsController(ProjectContext context, UserManager<ProjectUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
-
+        [Authorize(Roles = "Admin")]
         // GET: Enrollments
         public async Task<IActionResult> Index()
         {
             var projectContext = _context.Enrollment.Include(e => e.Course).Include(e => e.Student);
             return View(await projectContext.ToListAsync());
         }
-
+        [Authorize(Roles = "Admin")]
         // GET: Enrollments/Details/5
         public async Task<IActionResult> Details(long? id)
         {
@@ -50,6 +55,7 @@ namespace Project.Controllers
         }
 
         // GET: Enrollments/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             ViewData["CourseId"] = new SelectList(_context.Course, "Id", "Title");
@@ -60,6 +66,7 @@ namespace Project.Controllers
         // POST: Enrollments/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,CourseId,StudentId,Semester,Year,Grade,SeminalUrl,ProjectUrl,ExamPoints,SeminalPoints,ProjectPoints,AdditionalPoints,FinishDate")] Enrollment enrollment)
@@ -76,6 +83,7 @@ namespace Project.Controllers
         }
 
         // GET: Enrollments/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
@@ -96,6 +104,7 @@ namespace Project.Controllers
         // POST: Enrollments/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,CourseId,StudentId,Semester,Year,Grade,SeminalUrl,ProjectUrl,ExamPoints,SeminalPoints,ProjectPoints,AdditionalPoints,FinishDate")] Enrollment enrollment)
@@ -131,6 +140,7 @@ namespace Project.Controllers
         }
 
         // GET: Enrollments/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(long? id)
         {
             if (id == null)
@@ -151,6 +161,7 @@ namespace Project.Controllers
         }
 
         // POST: Enrollments/Delete/5
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
@@ -165,7 +176,7 @@ namespace Project.Controllers
         {
             return _context.Enrollment.Any(e => e.Id == id);
         }
-        // GET: Enrollments/StudentsEnrolledAtCourse/5/MarijaStefanoska
+        // GET: Enrollments/StudentsEnrolledAtCourse
         public async Task<IActionResult> StudentsEnrolledAtCourse(int? id, string teacher, int year)
         {
             if (id == null)
@@ -209,13 +220,20 @@ namespace Project.Controllers
             return View(viewmodel);
         }
         // GET: Enrollments/EditAsTeacher/5
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> EditAsTeacher(long? id, string teacher)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
+            string[] names = teacher.Split(" ");
+            var teacherModel = await _context.Teacher.FirstOrDefaultAsync(m => m.FirstName == names[0] && m.LastName == names[1]);
+            var userLoggedInId = HttpContext.Session.GetString("UserLoggedIn");
+            if (userLoggedInId != teacherModel.Id.ToString())
+            {
+                return Forbid();
+            }
             var enrollment = await _context.Enrollment.FindAsync(id);
             if (enrollment == null)
             {
@@ -229,6 +247,7 @@ namespace Project.Controllers
         // POST: Enrollments/EditAsTeacher/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Teacher")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditAsTeacher(long id, string teacher, [Bind("Id,CourseId,StudentId,Semester,Year,Grade,SeminalUrl,ProjectUrl,ExamPoints,SeminalPoints,ProjectPoints,AdditionalPoints,FinishDate")] Enrollment enrollment)
@@ -236,6 +255,13 @@ namespace Project.Controllers
             if (id != enrollment.Id)
             {
                 return NotFound();
+            }
+            string[] names = teacher.Split(" ");
+            var teacherModel = await _context.Teacher.FirstOrDefaultAsync(m => m.FirstName == names[0] && m.LastName == names[1]);
+            var userLoggedInId = HttpContext.Session.GetString("UserLoggedIn");
+            if (userLoggedInId != teacherModel.Id.ToString())
+            {
+                return Forbid();
             }
             string temp = teacher;
             if (ModelState.IsValid)
@@ -269,7 +295,11 @@ namespace Project.Controllers
             {
                 return NotFound();
             }
-
+            var userLoggedInId = HttpContext.Session.GetString("UserLoggedIn");
+            if (userLoggedInId != id.ToString() && userLoggedInId != "Admin")
+            {
+                return Forbid();
+            }
             var student = await _context.Student
                 .FirstOrDefaultAsync(m => m.Id == id);
 
@@ -288,6 +318,7 @@ namespace Project.Controllers
             return View(await enrollment.ToListAsync());
         }
         // GET: Enrollments/EditAsStudent/5
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> EditAsStudent(long? id)
         {
             if (id == null)
@@ -315,6 +346,7 @@ namespace Project.Controllers
         // POST: Enrollments/EditAsStudent/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Student")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditAsStudent(long id, EditAsStudent viewmodel)

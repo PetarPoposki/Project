@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Project.Areas.Identity.Data;
+using System.ComponentModel.DataAnnotations;
 
 namespace Project.Models
 {
@@ -7,7 +8,7 @@ namespace Project.Models
         public long Id { get; set; }
         [Required]
         [StringLength(10)]
-        public string StudentId { get; set; }
+        public string? StudentId { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -27,11 +28,15 @@ namespace Project.Models
 
         [StringLength(25)]
         public string? EducationLevel { get; set; }
-        public string FullName
+        public string? FullName
         {
             get { return String.Format("{0} {1}", FirstName, LastName); }
         }
         public string? ProfilePicture { get; set; }
         public ICollection<Enrollment>? Courses { get; set; }
+
+         public string? ProjectUserId { get; set; }
+         public ProjectUser? ProjectUser { get; set; }
+
     }
 }

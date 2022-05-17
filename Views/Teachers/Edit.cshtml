@@ -48,6 +48,11 @@
                 <input asp-for="ProfilePicture" class="form-control" readonly="@(true)">
                 <span asp-validation-for="ProfilePicture" class="text-danger"></span>
             </div>
+            <div class="form-group" style="display:none">
+                <label asp-for="ProjectUserId" class="control-label"></label>
+                <input asp-for="ProjectUserId" class="form-control" readonly="@(true)">
+                <span asp-validation-for="ProjectUserId" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

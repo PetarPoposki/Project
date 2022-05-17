@@ -3,9 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Project.Areas.Identity.Data;
 using Project.Data;
 using Project.Models;
 using Project.ViewModels;
@@ -15,12 +18,13 @@ namespace Project.Controllers
     public class StudentsController : Controller
     {
         private readonly ProjectContext _context;
-
-        public StudentsController(ProjectContext context)
+        private UserManager<ProjectUser> _userManager;
+        public StudentsController(ProjectContext context, UserManager<ProjectUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
-
+        [Authorize(Roles = "Admin")]
         // GET: Students
         public async Task<IActionResult> Index(string FullName, string StudentId)
         {
@@ -49,7 +53,7 @@ namespace Project.Controllers
 
             return View(StudentFilter);
         }
-
+        [Authorize(Roles = "Admin")]
         // GET: Students/Details/5
         public async Task<IActionResult> Details(long? id)
         {
@@ -75,6 +79,7 @@ namespace Project.Controllers
         }
 
         // GET: Students/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             ViewData["Courses"] = new SelectList(_context.Set<Course>(), "CourseId", "Title");
@@ -84,12 +89,21 @@ namespace Project.Controllers
         // POST: Students/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,StudentId,FirstName,LastName,EnrollmentDate,AcquiredCredits,CurrentSemester,EducationLevel")] Student student)
         {
             if (ModelState.IsValid)
             {
+                var User = new ProjectUser();
+                User.Email = student.FirstName.ToLower() + "." + student.LastName.ToLower() + "@project.com";
+                User.UserName = student.FirstName.ToLower() + "." + student.LastName.ToLower() + "@project.com";
+                string userPWD = "Student123";
+                IdentityResult chkUser = await _userManager.CreateAsync(User, userPWD);
+                //Add default User to Role Admin
+                if (chkUser.Succeeded) { var result1 = await _userManager.AddToRoleAsync(User, "Student"); }
+                student.ProjectUserId = User.Id;
                 _context.Add(student);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -98,6 +112,7 @@ namespace Project.Controllers
         }
 
         // GET: Students/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
@@ -128,6 +143,7 @@ namespace Project.Controllers
         // POST: Students/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, EnrollCoursesViaStudent viewmodel)
@@ -185,6 +201,7 @@ namespace Project.Controllers
         }
 
         // GET: Students/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(long? id)
         {
             if (id == null)
@@ -203,6 +220,7 @@ namespace Project.Controllers
         }
 
         // POST: Students/Delete/5
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
